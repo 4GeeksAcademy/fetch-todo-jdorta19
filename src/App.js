@@ -1,14 +1,9 @@
-
-import './App.css';
-import HomePage from './pages/Homepage';
+import React from "react";
+import "./App.css";
+import { TodoList } from "./pages/ToDoList.jsx";
 
 const App = () => {
-  return (
-    
-    <HomePage />
-    
-    
-  );
-}
+  return <TodoList />;
+};
 
 export default App;
