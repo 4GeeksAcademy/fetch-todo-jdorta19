@@ -1,30 +1,60 @@
 import React from "react";
-import { useState } from "react";
 import { Button, Form, ListGroup } from "react-bootstrap";
+// import { method } from 'lodash';
+import { useState, useEffect } from "react";
+
+//  PROYECTO FETCH
 
 export const TodoList = () => {
-  const firstItems = [
-    {
-      task: "Clean shoes",
-      id: crypto.randomUUID(),
-    },
-    {
-      task: "Make the dinner",
-      id: crypto.randomUUID(),
-    },
-  ];
-
-  const [listItems, setListItems] = useState(firstItems);
+  const [listItems, setListItems] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [currentMarked, setCurrentMarked] = useState("");
 
+  const getTodosUser = () => {
+    fetch("https://playground.4geeks.com/todo/users/JDorta19", {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response.todos);
+        setListItems(response.todos);
+      })
+      .catch(() => console.log("Tareas"));
+  };
+  useEffect(() => {
+    getTodosUser();
+  }, []);
+
+  const UpdateList = (ItemTask) => {
+    fetch("https://playground.4geeks.com/todo/todos/JDorta19", {
+      method: "POST",
+      body: JSON.stringify(ItemTask),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log("success:", response);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const deleteList = (ItemTask) => {
+    fetch("https://playground.4geeks.com/todo/todos/JDorta19", {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.log(error));
+  };
+
   const createItem = (ItemTask) => {
-    const newItemId = crypto.randomUUID();
-    const newItems = listItems.concat({
-      task: ItemTask,
-      id: newItemId,
-    });
-    setListItems(newItems);
+    let newTask = { label: ItemTask };
+    UpdateList(newTask);
+    getTodosUser();
   };
 
   const deleteItem = (itemId) => {
@@ -70,7 +100,7 @@ export const TodoList = () => {
             onMouseEnter={() => setCurrentMarked(item.id)}
             onMouseLeave={() => setCurrentMarked("")}
           >
-            {item.task}
+            {item.label}
             {currentMarked === item.id && (
               <Button
                 variant="danger"
